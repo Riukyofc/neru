@@ -9,7 +9,6 @@ import LoadingScreen from './components/LoadingScreen';
 import DiscordFAB from './components/DiscordFAB';
 import Home from './pages/Home';
 import Services from './pages/Services';
-import Portfolio from './pages/Portfolio';
 import FiveM from './pages/FiveM';
 import AppsMobile from './pages/AppsMobile';
 import SistemasWeb from './pages/SistemasWeb';
@@ -41,7 +40,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/servicos" element={<Services />} />
-            <Route path="/portfolio" element={<Portfolio />} />
+
             <Route path="/fivem" element={<FiveM />} />
             <Route path="/apps-mobile" element={<AppsMobile />} />
             <Route path="/sistemas-web" element={<SistemasWeb />} />

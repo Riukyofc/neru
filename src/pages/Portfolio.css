@@ -1,100 +1,511 @@
 /* ============================
-   PORTFOLIO PAGE STYLES
+   PORTFOLIO PAGE — riukydev.vercel.app style
    ============================ */
 
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
+/* ── Hero ── */
+.portfolio-hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 160px 0 120px;
+    position: relative;
 }
 
-.portfolio-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+.portfolio-hero .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #10b981;
+    margin-bottom: 32px;
+    letter-spacing: 0.02em;
+}
+
+.portfolio-hero .hero-badge .dot {
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+.portfolio-hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 24px;
+    max-width: 800px;
+}
+
+.portfolio-hero .hero-desc {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-bottom: 40px;
+}
+
+.portfolio-hero .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.btn-white {
+    background: #fff;
+    color: #000;
+    padding: 14px 32px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: none;
+    transition: all var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-white:hover {
+    background: #e5e5e5;
+    transform: translateY(-2px);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #fff;
+    padding: 14px 32px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+/* ── Section Headers ── */
+.pf-section {
+    padding: 100px 0;
+    position: relative;
+}
+
+.pf-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.pf-section-header h2 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: #fff;
+}
+
+.pf-section-header p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+.pf-section-link {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: var(--radius-full);
+    transition: all var(--transition-smooth);
+    white-space: nowrap;
+}
+
+.pf-section-link:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+/* ── Stack Grid ── */
+.stack-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.stack-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-lg);
+    padding: 28px 24px;
+    transition: all var(--transition-smooth);
+}
+
+.stack-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stack-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stack-card .stack-icon {
+    font-size: 1.3rem;
+}
+
+.stack-card ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stack-card ul li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stack-card ul li::before {
+    content: '›';
+    color: rgba(255, 255, 255, 0.25);
+    font-weight: 700;
+}
+
+/* ── Project Cards ── */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.project-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: all var(--transition-smooth);
 }
 
-.portfolio-card:hover {
-    border-color: var(--border-hover);
+.project-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
     transform: translateY(-4px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
-.portfolio-thumbnail {
-    height: 220px;
-    position: relative;
-    overflow: hidden;
+.project-card-thumb {
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.portfolio-thumbnail::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.2);
-    transition: background var(--transition-smooth);
-}
-
-.portfolio-card:hover .portfolio-thumbnail::after {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-.portfolio-thumbnail-content {
     position: relative;
-    z-index: 1;
-    text-align: center;
+    overflow: hidden;
 }
 
-.portfolio-category {
-    padding: 6px 16px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: var(--radius-full);
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: white;
-    backdrop-filter: blur(10px);
+.project-card-thumb .thumb-icon {
+    font-size: 3.5rem;
+    opacity: 0.7;
+    transition: transform var(--transition-smooth);
 }
 
-.portfolio-info {
+.project-card:hover .thumb-icon {
+    transform: scale(1.1);
+}
+
+.project-card-body {
     padding: 24px;
 }
 
-.portfolio-info h3 {
-    font-size: 1.15rem;
-    margin-bottom: 8px;
+.project-card-body .project-category {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    display: block;
 }
 
-.portfolio-info p {
-    font-size: 0.9rem;
+.category-landing {
+    color: #f97316;
+}
+
+.category-corporate {
+    color: #3b82f6;
+}
+
+.category-interface {
+    color: #a855f7;
+}
+
+.category-food {
+    color: #ef4444;
+}
+
+.project-card-body h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.project-card-body p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
     margin-bottom: 16px;
 }
 
-.portfolio-tags {
+.project-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    margin-bottom: 20px;
 }
 
-.portfolio-tag {
-    padding: 4px 10px;
-    font-size: 0.7rem;
+.project-tag {
+    padding: 4px 12px;
+    font-size: 0.72rem;
     font-weight: 600;
     border-radius: var(--radius-full);
-    background: var(--bg-glass);
-    border: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.06);
     color: var(--text-secondary);
 }
 
+.project-links {
+    display: flex;
+    gap: 12px;
+}
+
+.project-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: all var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.project-link:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── FiveM Section ── */
+.fivem-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.fivem-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    transition: all var(--transition-smooth);
+}
+
+.fivem-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px);
+}
+
+.fivem-card .fivem-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.fivem-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.fivem-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.fivem-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ef4444;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity var(--transition-fast);
+}
+
+.fivem-link:hover {
+    opacity: 0.8;
+}
+
+/* ── Contact CTA ── */
+.pf-contact {
+    text-align: center;
+    padding: 120px 0;
+}
+
+.pf-contact h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.pf-contact>p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin: 0 auto 40px;
+}
+
+.whatsapp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 36px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: rgba(37, 211, 102, 0.1);
+    border: 1px solid rgba(37, 211, 102, 0.3);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-smooth);
+}
+
+.whatsapp-btn:hover {
+    background: rgba(37, 211, 102, 0.2);
+    border-color: rgba(37, 211, 102, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(37, 211, 102, 0.15);
+}
+
+.whatsapp-btn .wa-icon {
+    font-size: 1.4rem;
+}
+
+/* ── Footer ── */
+.pf-footer {
+    text-align: center;
+    padding: 40px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pf-footer p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+/* ── Ambient Glow ── */
+.pf-glow {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.pf-glow-left {
+    top: 20%;
+    left: -100px;
+}
+
+.pf-glow-right {
+    bottom: 30%;
+    right: -100px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .stack-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
-    .portfolio-grid {
+    .portfolio-hero {
+        padding: 120px 0 80px;
+    }
+
+    .portfolio-hero h1 {
+        font-size: clamp(2rem, 8vw, 3rem);
+    }
+
+    .stack-grid {
         grid-template-columns: 1fr;
     }
 
-    .portfolio-thumbnail {
-        height: 180px;
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .fivem-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pf-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-white,
+    .btn-ghost {
+        justify-content: center;
     }
 }

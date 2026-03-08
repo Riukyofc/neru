@@ -6,7 +6,6 @@ import './Navbar.css';
 const navLinks = [
   { path: '/', key: 'inicio' },
   { path: '/servicos', key: 'servicos' },
-  { path: '/portfolio', key: 'portfolio' },
   { path: '/fivem', key: 'fivem' },
   { path: '/apps-mobile', key: 'apps' },
   { path: '/sistemas-web', key: 'web' },

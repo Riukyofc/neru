@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function CustomCursor() {
     const dotRef = useRef(null);
     const ringRef = useRef(null);
-    const [hovering, setHovering] = useState(false);
+    const hoveringRef = useRef(false);
 
     useEffect(() => {
         const dot = dotRef.current;
@@ -12,6 +12,7 @@ export default function CustomCursor() {
 
         let mouseX = 0, mouseY = 0;
         let ringX = 0, ringY = 0;
+        let rafId;
 
         const onMove = (e) => {
             mouseX = e.clientX;
@@ -22,31 +23,45 @@ export default function CustomCursor() {
         const animate = () => {
             ringX += (mouseX - ringX) * 0.15;
             ringY += (mouseY - ringY) * 0.15;
-            ring.style.transform = `translate(${ringX - 20}px, ${ringY - 20}px) scale(${hovering ? 1.5 : 1})`;
-            requestAnimationFrame(animate);
+            const scale = hoveringRef.current ? 1.5 : 1;
+            ring.style.transform = `translate(${ringX - 20}px, ${ringY - 20}px) scale(${scale})`;
+            rafId = requestAnimationFrame(animate);
         };
 
-        const onEnter = () => setHovering(true);
-        const onLeave = () => setHovering(false);
+        const onEnter = () => {
+            hoveringRef.current = true;
+            ring.classList.add('hovering');
+        };
+        const onLeave = () => {
+            hoveringRef.current = false;
+            ring.classList.remove('hovering');
+        };
 
-        document.addEventListener('mousemove', onMove);
-        const links = document.querySelectorAll('a, button, .btn, .nav-link, .product-card, .card');
-        links.forEach(el => {
-            el.addEventListener('mouseenter', onEnter);
-            el.addEventListener('mouseleave', onLeave);
-        });
+        // Use event delegation instead of querying all elements
+        const onMouseOver = (e) => {
+            if (e.target.closest('a, button, .btn, .nav-link, .product-card, .card')) {
+                onEnter();
+            }
+        };
+        const onMouseOut = (e) => {
+            if (e.target.closest('a, button, .btn, .nav-link, .product-card, .card')) {
+                onLeave();
+            }
+        };
 
-        const raf = requestAnimationFrame(animate);
+        document.addEventListener('mousemove', onMove, { passive: true });
+        document.addEventListener('mouseover', onMouseOver, { passive: true });
+        document.addEventListener('mouseout', onMouseOut, { passive: true });
+
+        rafId = requestAnimationFrame(animate);
 
         return () => {
             document.removeEventListener('mousemove', onMove);
-            links.forEach(el => {
-                el.removeEventListener('mouseenter', onEnter);
-                el.removeEventListener('mouseleave', onLeave);
-            });
-            cancelAnimationFrame(raf);
+            document.removeEventListener('mouseover', onMouseOver);
+            document.removeEventListener('mouseout', onMouseOut);
+            cancelAnimationFrame(rafId);
         };
-    }, [hovering]);
+    }, []); // empty deps — runs once
 
     // Hide on touch devices
     const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window);
@@ -55,7 +70,7 @@ export default function CustomCursor() {
     return (
         <>
             <div ref={dotRef} className="cursor-dot" />
-            <div ref={ringRef} className={`cursor-ring ${hovering ? 'hovering' : ''}`} />
+            <div ref={ringRef} className="cursor-ring" />
         </>
     );
 }
