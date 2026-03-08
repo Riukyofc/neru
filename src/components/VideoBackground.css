@@ -1,6 +1,6 @@
 /* ============================
-   VIDEO BACKGROUND
-   Full-screen YouTube embed as site background
+   VIDEO BACKGROUND → CSS Ambient
+   Lightweight replacement for YouTube iframe
    ============================ */
 
 .video-bg-wrapper {
@@ -15,40 +15,33 @@
     background: #050507;
 }
 
-.video-bg-iframe {
+.video-bg-ambient {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    /* Scale up to ensure full coverage regardless of aspect ratio */
-    width: 120vw;
-    height: 120vh;
-    min-width: 120vw;
-    min-height: 120vh;
-    transform: translate(-50%, -50%);
-    border: none;
-    pointer-events: none;
-    object-fit: cover;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 40%, rgba(59, 130, 246, 0.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 60%, rgba(139, 92, 246, 0.03) 0%, transparent 60%);
+    animation: ambientShift 20s ease-in-out infinite alternate;
+    will-change: opacity;
 }
 
-/* Overlay — subtle, keeps video clear */
+@keyframes ambientShift {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.7;
+    }
+}
+
 .video-bg-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(5, 5, 7, 0.35);
+    background: rgba(5, 5, 7, 0.15);
     pointer-events: none;
-}
-
-/* Extra responsive sizing for very wide or very tall screens */
-@media (min-aspect-ratio: 16/9) {
-    .video-bg-iframe {
-        width: 140vw;
-        height: 140vh;
-    }
-}
-
-@media (max-aspect-ratio: 9/16) {
-    .video-bg-iframe {
-        width: 160vw;
-        height: 160vh;
-    }
 }

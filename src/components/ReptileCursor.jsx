@@ -1,16 +1,17 @@
 import { useEffect, useRef } from 'react';
 
 /*
- * Reptile Interactive Cursor — Optimized
- * Reduced segments (80→44), less frequent ribs, throttled mouse events.
+ * Reptile Interactive Cursor — Lightweight Version
+ * Minimal skeleton with smooth follow. No ribs, no legs, no glow effects.
+ * Just spine + vertebrae for maximum performance.
  */
 
 class Segment {
-    constructor(x, y, len, angle) {
+    constructor(x, y, len) {
         this.x = x;
         this.y = y;
         this.len = len;
-        this.angle = angle || 0;
+        this.angle = 0;
     }
 
     follow(tx, ty) {
@@ -31,13 +32,12 @@ export default function ReptileCursor() {
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        const ctx = canvas.getContext('2d', { alpha: true });
+        const ctx = canvas.getContext('2d');
 
-        let dpr = window.devicePixelRatio || 1;
         let width, height;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
         function resize() {
-            dpr = window.devicePixelRatio || 1;
             width = window.innerWidth;
             height = window.innerHeight;
             canvas.width = width * dpr;
@@ -48,29 +48,12 @@ export default function ReptileCursor() {
         }
         resize();
 
-        let mouseX = width / 2;
-        let mouseY = height / 2;
-        let targetX = mouseX;
-        let targetY = mouseY;
+        let targetX = width / 2, targetY = height / 2;
+        let mouseX = targetX, mouseY = targetY;
 
-        // Reduced skeleton
-        const TOTAL = 44;
-        const SEG_LEN = 12;
-        const segments = [];
-        for (let i = 0; i < TOTAL; i++) {
-            segments.push(new Segment(width / 2, height / 2, SEG_LEN, 0));
-        }
-
-        const legPairs = [
-            { at: 6, len: 28, segs: 3, side: 1 },
-            { at: 6, len: 28, segs: 3, side: -1 },
-            { at: 9, len: 26, segs: 3, side: 1 },
-            { at: 9, len: 26, segs: 3, side: -1 },
-            { at: 28, len: 24, segs: 3, side: 1 },
-            { at: 28, len: 24, segs: 3, side: -1 },
-            { at: 31, len: 22, segs: 3, side: 1 },
-            { at: 31, len: 22, segs: 3, side: -1 },
-        ];
+        const TOTAL = 30;
+        const SEG_LEN = 14;
+        const segments = Array.from({ length: TOTAL }, () => new Segment(width / 2, height / 2, SEG_LEN));
 
         const onMouse = (e) => { targetX = e.clientX; targetY = e.clientY; };
         const onTouch = (e) => {
@@ -82,18 +65,16 @@ export default function ReptileCursor() {
         window.addEventListener('resize', resize);
 
         let raf;
-        let time = 0;
 
         function bodyW(i) {
             const t = i / TOTAL;
-            if (t < 0.06) return 4 + t / 0.06 * 20;
-            if (t < 0.12) return 24;
-            if (t < 0.55) return 24 - (t - 0.12) / 0.43 * 6;
-            return 18 * Math.pow(1 - (t - 0.55) / 0.45, 1.6);
+            if (t < 0.08) return 3 + t / 0.08 * 15;
+            if (t < 0.15) return 18;
+            if (t < 0.55) return 18 - (t - 0.15) / 0.4 * 4;
+            return 14 * Math.pow(1 - (t - 0.55) / 0.45, 1.5);
         }
 
         function draw() {
-            time += 0.016;
             ctx.clearRect(0, 0, width, height);
 
             mouseX += (targetX - mouseX) * 0.12;
@@ -101,156 +82,57 @@ export default function ReptileCursor() {
 
             // IK solve
             segments[0].follow(mouseX, mouseY);
-            for (let i = 1; i < TOTAL; i++) {
-                segments[i].follow(segments[i - 1].x, segments[i - 1].y);
-            }
+            for (let i = 1; i < TOTAL; i++) segments[i].follow(segments[i - 1].x, segments[i - 1].y);
 
-            // Body membrane
+            // Body silhouette
             ctx.beginPath();
             for (let i = 0; i < TOTAL; i++) {
-                const s = segments[i];
-                const w = bodyW(i);
-                const px = s.x + Math.cos(s.angle + Math.PI / 2) * w;
-                const py = s.y + Math.sin(s.angle + Math.PI / 2) * w;
+                const s = segments[i], w = bodyW(i);
+                const px = s.x + Math.cos(s.angle + 1.5708) * w;
+                const py = s.y + Math.sin(s.angle + 1.5708) * w;
                 i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
             }
             for (let i = TOTAL - 1; i >= 0; i--) {
-                const s = segments[i];
-                const w = bodyW(i);
-                const px = s.x + Math.cos(s.angle - Math.PI / 2) * w;
-                const py = s.y + Math.sin(s.angle - Math.PI / 2) * w;
-                ctx.lineTo(px, py);
+                const s = segments[i], w = bodyW(i);
+                ctx.lineTo(s.x + Math.cos(s.angle - 1.5708) * w, s.y + Math.sin(s.angle - 1.5708) * w);
             }
             ctx.closePath();
-            ctx.fillStyle = 'rgba(139, 92, 246, 0.03)';
+            ctx.fillStyle = 'rgba(139, 92, 246, 0.025)';
             ctx.fill();
 
             // Spine
             ctx.beginPath();
             ctx.moveTo(segments[0].endX(), segments[0].endY());
             for (let i = 0; i < TOTAL; i++) ctx.lineTo(segments[i].x, segments[i].y);
-            ctx.strokeStyle = 'rgba(200, 180, 255, 0.5)';
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = 'rgba(200, 180, 255, 0.4)';
+            ctx.lineWidth = 2.5;
             ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
             ctx.stroke();
 
-            // Spine glow
-            ctx.beginPath();
-            ctx.moveTo(segments[0].endX(), segments[0].endY());
-            for (let i = 0; i < TOTAL; i++) ctx.lineTo(segments[i].x, segments[i].y);
-            ctx.strokeStyle = 'rgba(139, 92, 246, 0.15)';
-            ctx.lineWidth = 8;
-            ctx.stroke();
-
-            // Ribs — every 4th segment instead of every 2nd
-            for (let i = 2; i < TOTAL; i += 4) {
+            // Vertebrae dots — every 4th
+            for (let i = 0; i < TOTAL; i += 4) {
                 const t = i / TOTAL;
-                const w = bodyW(i) * 0.95;
-                if (w < 3) continue;
-
-                const seg = segments[i];
-                const perp = seg.angle + Math.PI / 2;
-                const cx = seg.x, cy = seg.y;
-                const r1x = cx + Math.cos(perp) * w;
-                const r1y = cy + Math.sin(perp) * w;
-                const r2x = cx - Math.cos(perp) * w;
-                const r2y = cy - Math.sin(perp) * w;
-
-                const alpha = 0.15 + (1 - t) * 0.3;
-                ctx.strokeStyle = `rgba(180, 160, 240, ${alpha})`;
-                ctx.lineWidth = 1.2;
-
                 ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(r1x, r1y);
-                ctx.stroke();
-
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(r2x, r2y);
-                ctx.stroke();
-            }
-
-            // Vertebrae — every 3rd
-            for (let i = 0; i < TOTAL; i += 3) {
-                const t = i / TOTAL;
-                const r = 2 + (1 - t) * 2;
-                ctx.beginPath();
-                ctx.arc(segments[i].x, segments[i].y, r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + (1 - t) * 0.4})`;
+                ctx.arc(segments[i].x, segments[i].y, 1.5 + (1 - t) * 1.5, 0, 6.2832);
+                ctx.fillStyle = `rgba(255, 255, 255, ${0.25 + (1 - t) * 0.3})`;
                 ctx.fill();
             }
-
-            // Legs
-            legPairs.forEach((leg) => {
-                const anchor = segments[leg.at];
-                if (!anchor) return;
-                const perp = anchor.angle + Math.PI / 2 * leg.side;
-                const baseX = anchor.x + Math.cos(perp) * bodyW(leg.at) * 0.7;
-                const baseY = anchor.y + Math.sin(perp) * bodyW(leg.at) * 0.7;
-
-                const bendPhase = time * 2 + leg.at * 0.3 + leg.side * 1.5;
-                const bendAngle = perp + Math.sin(bendPhase) * 0.4;
-                const subLen = leg.len / leg.segs;
-
-                let prevX = baseX, prevY = baseY;
-                let angle = bendAngle;
-                const joints = [{ x: prevX, y: prevY }];
-                for (let s = 0; s < leg.segs; s++) {
-                    angle += (s === 1 ? 0.6 : 0.2) * Math.sin(bendPhase + s);
-                    const nx = prevX + Math.cos(angle) * subLen;
-                    const ny = prevY + Math.sin(angle) * subLen;
-                    joints.push({ x: nx, y: ny });
-                    prevX = nx;
-                    prevY = ny;
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(joints[0].x, joints[0].y);
-                for (let j = 1; j < joints.length; j++) ctx.lineTo(joints[j].x, joints[j].y);
-                ctx.strokeStyle = 'rgba(180, 160, 240, 0.35)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-
-                joints.forEach((j, idx) => {
-                    ctx.beginPath();
-                    ctx.arc(j.x, j.y, idx === 0 ? 2.5 : 1.8, 0, Math.PI * 2);
-                    ctx.fillStyle = idx === joints.length - 1 ? 'rgba(6, 182, 212, 0.5)' : 'rgba(255, 255, 255, 0.4)';
-                    ctx.fill();
-                });
-            });
 
             // Head
             const head = segments[0];
             const hx = head.endX(), hy = head.endY();
-
-            const grd = ctx.createRadialGradient(hx, hy, 0, hx, hy, 30);
-            grd.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
-            grd.addColorStop(1, 'rgba(139, 92, 246, 0)');
-            ctx.beginPath();
-            ctx.arc(hx, hy, 30, 0, Math.PI * 2);
-            ctx.fillStyle = grd;
-            ctx.fill();
-
             ctx.save();
             ctx.translate(hx, hy);
             ctx.rotate(head.angle);
-
             ctx.beginPath();
-            ctx.ellipse(0, 0, 10, 7, 0, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(220, 210, 255, 0.7)';
+            ctx.ellipse(0, 0, 8, 5.5, 0, 0, 6.2832);
+            ctx.fillStyle = 'rgba(220, 210, 255, 0.6)';
             ctx.fill();
 
             // Eyes
-            ctx.beginPath();
-            ctx.arc(3, -5, 2.5, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(6, 182, 212, 0.95)';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(3, 5, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.9)';
+            ctx.beginPath(); ctx.arc(2, -4, 2, 0, 6.2832); ctx.fill();
+            ctx.beginPath(); ctx.arc(2, 4, 2, 0, 6.2832); ctx.fill();
             ctx.restore();
 
             raf = requestAnimationFrame(draw);
@@ -271,10 +153,8 @@ export default function ReptileCursor() {
             ref={canvasRef}
             style={{
                 position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
+                top: 0, left: 0,
+                width: '100%', height: '100%',
                 pointerEvents: 'none',
                 zIndex: 1,
                 background: '#050507',
