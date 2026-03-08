@@ -1,0 +1,54 @@
+/* ============================
+   VIDEO BACKGROUND
+   Full-screen YouTube embed as site background
+   ============================ */
+
+.video-bg-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #050507;
+}
+
+.video-bg-iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Scale up to ensure full coverage regardless of aspect ratio */
+    width: 120vw;
+    height: 120vh;
+    min-width: 120vw;
+    min-height: 120vh;
+    transform: translate(-50%, -50%);
+    border: none;
+    pointer-events: none;
+    object-fit: cover;
+}
+
+/* Overlay — subtle, keeps video clear */
+.video-bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 5, 7, 0.35);
+    pointer-events: none;
+}
+
+/* Extra responsive sizing for very wide or very tall screens */
+@media (min-aspect-ratio: 16/9) {
+    .video-bg-iframe {
+        width: 140vw;
+        height: 140vh;
+    }
+}
+
+@media (max-aspect-ratio: 9/16) {
+    .video-bg-iframe {
+        width: 160vw;
+        height: 160vh;
+    }
+}
