@@ -4,7 +4,7 @@ import { LangProvider } from './i18n';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import VideoBackground from './components/VideoBackground';
-import CustomCursor from './components/CustomCursor';
+
 import LoadingScreen from './components/LoadingScreen';
 import DiscordFAB from './components/DiscordFAB';
 import Home from './pages/Home';
@@ -30,7 +30,7 @@ function App() {
   return (
     <LangProvider>
       {loading && <LoadingScreen onComplete={handleLoadComplete} />}
-      <CustomCursor />
+
       <BrowserRouter>
         <ScrollToTop />
         <VideoBackground />
